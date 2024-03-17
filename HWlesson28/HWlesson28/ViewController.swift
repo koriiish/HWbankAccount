@@ -22,9 +22,9 @@ class ViewController: UIViewController, BancAccount {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        deposit(10.00)
+       // deposit(10.00)
         work()
-        withdraw(1.00)
+       // withdraw(1.00)
         doAnotherFunction()
         doDeposit()
         
@@ -58,8 +58,8 @@ class ViewController: UIViewController, BancAccount {
         recursiveLock.lock()
         DispatchQueue.main.async { [self] in
             doDeposit()
-            withdraw(10.00)
         }
+        withdraw(10.00)
         recursiveLock.unlock()
     }
 
