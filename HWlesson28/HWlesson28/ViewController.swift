@@ -22,9 +22,9 @@ class ViewController: UIViewController, BancAccount {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       // deposit(10.00)
+        deposit(10.00)
         work()
-       // withdraw(1.00)
+        withdraw(1.00)
         doAnotherFunction()
         doDeposit()
         
