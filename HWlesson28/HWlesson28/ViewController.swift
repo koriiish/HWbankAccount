@@ -14,63 +14,64 @@ protocol BancAccount {
     func withdraw(_ value: Decimal)
 }
 
-class ViewController: UIViewController, BancAccount {
-    var balance: Decimal = 0.0
+class BankService: BancAccount {
     
+    var balance: Decimal = 0.0
     let lock = NSLock()
     let recursiveLock = NSRecursiveLock()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        deposit(10.00)
-        work()
-        withdraw(1.00)
-        doAnotherFunction()
-        doDeposit()
-        
-    }
-
     func deposit(_ value: Decimal) {
+        lock.lock()
         if value > 0 {
             balance += value
             print("Balance: \(balance)")
         }
+        lock.unlock()
     }
     
     func withdraw(_ value: Decimal) {
+        recursiveLock.lock()
         if balance > value {
             balance -= value
             print("Balance: \(balance)")
         } else {
             print("You have not enough money for this transaction")
         }
+        recursiveLock.unlock()
+    }
+}
+
+class ViewController: UIViewController {
+    
+    var bankService: BancAccount = BankService()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        bankService.deposit(10.00)
+        work()
+        bankService.withdraw(1.00)
+        doAnotherFunction()
+        doDeposit()
     }
     
+    
     func work() {
-    lock.lock()
-        DispatchQueue.main.async { [self] in
-            deposit(20.00)
+        DispatchQueue.global().async { [self] in
+            bankService.deposit(20.00)
         }
-    lock.unlock()
     }
     
     func doAnotherFunction() {
-        recursiveLock.lock()
         DispatchQueue.main.async { [self] in
             doDeposit()
         }
-        withdraw(10.00)
-        recursiveLock.unlock()
+        bankService.withdraw(10.00)
     }
-
+    
     func doDeposit() {
-        recursiveLock.lock()
         DispatchQueue.main.async { [self] in
-            deposit(80.00)
+            bankService.deposit(80.00)
         }
-        recursiveLock.unlock()
     }
-
-   
 }
 
